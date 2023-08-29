@@ -1,34 +1,67 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:intelligentcounter/main.dart';
 
-class Profile extends StatelessWidget {
+class Profile extends StatefulWidget {
   const Profile({super.key});
+
+  @override
+  State<Profile> createState() => _ProfileState();
+}
+
+class _ProfileState extends State<Profile> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(),
-        body: Center(
+        body: const Center(
             child: Padding(
-          padding: const EdgeInsets.all(20.0),
+          padding: EdgeInsets.all(20.0),
           child: RoundedTextBox(),
         )));
   }
 }
 
-//"https://intelligentcounter-29709-default-rtdb.europe-west1.firebasedatabase.app/qMPDfwFAnVN5J2lSmOwdfUhg20z2"
-getData() async {
-  DatabaseReference ref = FirebaseDatabase.instance.ref('/values/');
-  DatabaseEvent event = await ref.once();
-  String data = event.snapshot.value as String;
+class RoundedTextBox extends StatefulWidget {
+  const RoundedTextBox({super.key});
 
-  debugPrint(data);
-
-  return data;
+  @override
+  State<RoundedTextBox> createState() => _RoundedTextBoxState();
 }
 
-// ignore: must_be_immutable, use_key_in_widget_constructors
-class RoundedTextBox extends StatelessWidget {
-  String data = "IMPORTED_VALUE";
+class _RoundedTextBoxState extends State<RoundedTextBox> {
+  String data_value = "IMPORTED_VALUE";
+  String data_conso = "IMPORTED_VALUE";
+
+  Future<String> getValue() async {
+    Query ref = FirebaseDatabase.instance
+        .ref('${FirebaseAuth.instance.currentUser!.uid}/values/')
+        .orderByValue()
+        .limitToLast(1);
+    DatabaseEvent event = await ref.once();
+    Map data = event.snapshot.value as Map;
+    debugPrint(data.toString());
+    return data[data.keys.first]["Value"];
+  }
+
+  Future<String> getConso() async {
+    DatabaseReference ref = FirebaseDatabase.instance
+        .ref('${FirebaseAuth.instance.currentUser!.uid}/conso/Value');
+    DatabaseEvent event = await ref.once();
+    int data = event.snapshot.value as int;
+    debugPrint(data.toString());
+    return data.toString();
+  }
+
+  void updateData() async {
+    DatabaseReference ref = FirebaseDatabase.instance
+        .ref('${FirebaseAuth.instance.currentUser!.uid}/activities');
+    ref.update({
+      "/isActive": true,
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -41,7 +74,7 @@ class RoundedTextBox extends StatelessWidget {
           child: Text("Current Value",
               textAlign: TextAlign.center,
               style: TextStyle(
-                fontSize: 40,
+                fontSize: 20,
               )),
         ),
       ),
@@ -53,9 +86,9 @@ class RoundedTextBox extends StatelessWidget {
               255, 125, 8, 141), // Customize the color here
         ),
         child: Text(
-          data,
+          data_value,
           style: const TextStyle(
-            fontSize: 40,
+            fontSize: 30,
             fontWeight: FontWeight.bold,
             color: Colors.white, // Customize the text color here
           ),
@@ -67,7 +100,7 @@ class RoundedTextBox extends StatelessWidget {
           child: Text("Latest Increase",
               textAlign: TextAlign.center,
               style: TextStyle(
-                fontSize: 40,
+                fontSize: 20,
               )),
         ),
       ),
@@ -79,22 +112,42 @@ class RoundedTextBox extends StatelessWidget {
               255, 125, 8, 141), // Customize the color here
         ),
         child: Text(
-          "+$data",
+          data_conso,
           style: const TextStyle(
-            fontSize: 40,
+            fontSize: 30,
             fontWeight: FontWeight.bold,
             color: Colors.white, // Customize the text color here
           ),
         ),
       ),
       Padding(
-        padding: const EdgeInsets.all(100.0),
+        padding: const EdgeInsets.all(25.0),
         child: FilledButton(
             onPressed: () async {
-              data = getData();
+              updateData();
+            },
+            child: const Text("Capture")),
+      ),
+      Padding(
+        padding: const EdgeInsets.all(25.0),
+        child: FilledButton(
+            onPressed: () async {
+              data_conso = await getConso();
+              data_value = await getValue();
+              setState(() {});
             },
             child: const Text("Update")),
-      )
+      ),
+      Padding(
+        padding: const EdgeInsets.all(25.0),
+        child: FilledButton(
+            onPressed: () async {
+              FirebaseAuth.instance.signOut();
+              Navigator.pushReplacement(context,
+                  MaterialPageRoute(builder: (context) => const Home()));
+            },
+            child: const Text("Logout")),
+      ),
     ])));
   }
 }
