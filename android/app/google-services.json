@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "599903397080",
+    "firebase_url": "https://intelligentcounter-29709-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "intelligentcounter-29709",
+    "storage_bucket": "intelligentcounter-29709.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:599903397080:android:765fa9831131a48fd3e3ad",
+        "android_client_info": {
+          "package_name": "com.example.intelligentcounter"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "599903397080-b50ag6nj22of196ml16ojvmkc1nb7vmm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAR8ai8Gv3a77UY4gcTFl93SC3veUEMbcE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "599903397080-b50ag6nj22of196ml16ojvmkc1nb7vmm.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
